@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   AppView, 
   UserRole, 
@@ -27,7 +27,7 @@ import {
 } from 'recharts';
 
 // Declaração de tipos para integração com o ambiente de chaves de API
-// Fix: Definido a interface AIStudio e atribuído ao window.aistudio para resolver conflito de tipo global
+// Adicionada interface AIStudio para resolver conflito de declaração global
 declare global {
   interface AIStudio {
     hasSelectedApiKey: () => Promise<boolean>;
@@ -45,15 +45,12 @@ const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<Cliente | null>(null);
   const [allClientes] = useState<Cliente[]>(MOCK_CLIENTES);
   const [estoques, setEstoques] = useState<Record<string, Estoque>>(MOCK_ESTOQUE);
-  const [pedidos, setPedidos] = useState<Pedido[]>(MOCK_PEDIDOS);
   
   const [aiAnalysis, setAiAnalysis] = useState<any>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [selectedClienteId, setSelectedClienteId] = useState<string | null>(null);
 
   const checkApiKeyAndRun = async (action: () => Promise<void>) => {
     try {
-      // Utilizando a verificação segura da propriedade opcional no window
       if (window.aistudio) {
         const hasKey = await window.aistudio.hasSelectedApiKey();
         if (!hasKey) {
@@ -108,7 +105,6 @@ const App: React.FC = () => {
   const runAiPrediction = (clienteId: string) => {
     checkApiKeyAndRun(async () => {
       setIsAnalyzing(true);
-      setSelectedClienteId(clienteId);
       const cliente = allClientes.find(c => c.id === clienteId);
       const estoque = estoques[clienteId];
       if (cliente && estoque) {
