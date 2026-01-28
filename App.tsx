@@ -27,10 +27,10 @@ import {
 } from 'recharts';
 
 // Declaração de tipos para integração com o ambiente de chaves de API
-// Adicionando readonly para garantir compatibilidade com a definição do ambiente e resolver erro de modificadores
+// Fix: Definido como opcional e com estrutura inline para evitar erros de modificadores duplicados e conflitos de tipo global
 declare global {
   interface Window {
-    readonly aistudio: {
+    aistudio?: {
       hasSelectedApiKey: () => Promise<boolean>;
       openSelectKey: () => Promise<void>;
     };
@@ -51,7 +51,8 @@ const App: React.FC = () => {
 
   const checkApiKeyAndRun = async (action: () => Promise<void>) => {
     try {
-      if (typeof window.aistudio !== 'undefined') {
+      // Utilizando a verificação segura da propriedade opcional no window
+      if (window.aistudio) {
         const hasKey = await window.aistudio.hasSelectedApiKey();
         if (!hasKey) {
           await window.aistudio.openSelectKey();
@@ -114,7 +115,7 @@ const App: React.FC = () => {
           setAiAnalysis(result);
         } catch (error: any) {
           if (error.message?.includes("Requested entity was not found.")) {
-             if (typeof window.aistudio !== 'undefined') {
+             if (window.aistudio) {
                await window.aistudio.openSelectKey();
              }
           }
