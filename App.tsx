@@ -27,15 +27,13 @@ import {
 } from 'recharts';
 
 // Declaração de tipos para integração com o ambiente de chaves de API
-// Ajustado para coincidir com a definição global AIStudio e evitar conflitos de tipos conforme erros observados
+// Adicionando readonly para garantir compatibilidade com a definição do ambiente e resolver erro de modificadores
 declare global {
-  interface AIStudio {
-    hasSelectedApiKey: () => Promise<boolean>;
-    openSelectKey: () => Promise<void>;
-  }
-
   interface Window {
-    aistudio: AIStudio;
+    readonly aistudio: {
+      hasSelectedApiKey: () => Promise<boolean>;
+      openSelectKey: () => Promise<void>;
+    };
   }
 }
 
